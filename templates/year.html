@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1 class="mb-4">
+    {{ year }} Papers
+</h1>
+
+<input
+    type="text"
+    id="searchInput"
+    class="form-control mb-4"
+    placeholder="Search subject or subject code...">
+
+<div class="row" id="papersContainer">
+
+{% for paper in papers %}
+
+<div class="col-md-6 mb-3 paper-card">
+
+    <div class="card shadow-sm h-100">
+
+        <div class="card-body">
+
+            <h5 class="card-title">
+                {{ paper.subject }}
+            </h5>
+
+            <p class="card-text mb-2">
+                <strong>Subject Code:</strong>
+                {{ paper.code }}
+            </p>
+
+            {% if paper.improvement %}
+
+            <span class="badge bg-warning text-dark mb-3">
+                Improvement Paper
+            </span>
+
+            {% endif %}
+
+            <div class="mt-3">
+
+                <a
+                    href="/view/{{ year }}/{{ paper.filename }}"
+                    target="_blank"
+                    class="btn btn-primary">
+
+                    Open PDF
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

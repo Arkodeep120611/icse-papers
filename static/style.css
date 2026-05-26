@@ -1,0 +1,57 @@
+body {
+
+    background-color: #f5f7fb;
+
+    font-family: Arial, sans-serif;
+
+}
+
+.navbar-brand {
+
+    font-size: 1.4rem;
+
+}
+
+.card {
+
+    border: none;
+
+    border-radius: 16px;
+
+    transition: 0.2s;
+
+}
+
+.card:hover {
+
+    transform: translateY(-4px);
+
+}
+
+.year-card {
+
+    cursor: pointer;
+
+}
+
+.card-title {
+
+    font-weight: bold;
+
+}
+
+.btn-primary {
+
+    border-radius: 10px;
+
+    padding-left: 18px;
+
+    padding-right: 18px;
+
+}
+
+footer {
+
+    font-size: 0.9rem;
+
+}
