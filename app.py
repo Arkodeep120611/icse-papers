@@ -6,8 +6,10 @@ app = Flask(__name__)
 
 BASE_DIR = "papers"
 
+
 SUBJECTS = {
-    # GROUP I — LANGUAGES
+
+    # GROUP 1 LANGUAGES
     "011": "English Language",
     "012": "Literature in English",
     "021": "Assamese",
@@ -42,7 +44,7 @@ SUBJECTS = {
     "431": "Portuguese",
     "471": "Tangkhul",
 
-    # GROUP II — CORE SUBJECTS
+    # GROUP 2
     "501": "History & Civics",
     "502": "Geography",
     "511": "Mathematics",
@@ -50,18 +52,18 @@ SUBJECTS = {
     "522": "Chemistry",
     "523": "Biology",
 
-    # GROUP III — ADDITIONAL SUBJECTS
+    # GROUP 3
     "531": "French (Group III)",
     "541": "Spanish (Group III)",
     "551": "German (Group III)",
 
-    "581": "History, Civics & Geography (Thailand) — Paper 1",
-    "582": "History, Civics & Geography (Thailand) — Paper 2",
+    "581": "History, Civics & Geography (Thailand) Paper 1",
+    "582": "History, Civics & Geography (Thailand) Paper 2",
 
-    "601": "Art — Paper 1",
-    "602": "Art — Paper 2",
-    "603": "Art — Paper 3",
-    "604": "Art — Paper 4",
+    "601": "Art Paper 1",
+    "602": "Art Paper 2",
+    "603": "Art Paper 3",
+    "604": "Art Paper 4",
 
     "631": "Commercial Studies",
     "641": "Economics",
@@ -85,83 +87,80 @@ SUBJECTS = {
     "881": "Commercial Applications",
     "891": "Environmental Applications",
 
-    # MUSIC, DANCE AND OTHER SUBJECTS
+    # OTHER SUBJECTS
     "901": "Mass Media & Communication",
     "911": "Hindustani Music",
     "921": "Carnatic Music",
     "931": "Western Music",
     "941": "Indian Dance",
     "951": "Drama",
-    "961": "Auto Service Technician",
+    "961": "Auto Service Technician"
 }
 
 
 def parse_filename(filename):
-    name = os.path.splitext(filename)[0]
 
-    # Extract the three-digit paper code at the beginning
-    code_match = re.match(r"^\s*(\d{3})(?=\s|[-_])", name)
+    name = filename.replace(".pdf", "")
+
+    code_match = re.search(r"\b(\d{3})\b", name)
+
     code = code_match.group(1) if code_match else "N/A"
 
     subject = SUBJECTS.get(code, "Unknown Subject")
+
     improvement = "IMPROVEMENT" in name.upper()
 
     return {
         "filename": filename,
         "code": code,
         "subject": subject,
-        "improvement": improvement,
+        "improvement": improvement
     }
 
 
 @app.route("/")
 def home():
-    if not os.path.isdir(BASE_DIR):
-        abort(404)
 
-    years = sorted(
-        [
-            folder
-            for folder in os.listdir(BASE_DIR)
-            if os.path.isdir(os.path.join(BASE_DIR, folder))
-        ],
-        reverse=True,
+    years = sorted(os.listdir(BASE_DIR), reverse=True)
+
+    return render_template(
+        "index.html",
+        years=years
     )
-
-    return render_template("index.html", years=years)
 
 
 @app.route("/year/<year>")
 def year_page(year):
+
     folder = os.path.join(BASE_DIR, year)
 
-    if not os.path.isdir(folder):
+    if not os.path.exists(folder):
         abort(404)
 
     papers = []
 
     for file in os.listdir(folder):
-        if file.lower().endswith(".pdf"):
+
+        if file.endswith(".pdf"):
+
             papers.append(parse_filename(file))
 
-    papers.sort(key=lambda paper: (paper["code"], paper["filename"].lower()))
+    papers.sort(key=lambda x: x["code"])
 
     return render_template(
         "year.html",
         year=year,
-        papers=papers,
+        papers=papers
     )
 
 
 @app.route("/view/<year>/<path:filename>")
 def view_pdf(year, filename):
-    folder = os.path.join(BASE_DIR, year)
 
-    if not os.path.isdir(folder):
-        abort(404)
-
-    # send_from_directory safely restricts file serving to this folder
-    return send_from_directory(folder, filename)
+    return send_from_directory(
+        os.path.join(BASE_DIR, year),
+        filename
+    )
 
 
 if __name__ == "__main__":
