@@ -4,7 +4,7 @@ import re
 
 app = Flask(__name__)
 
-BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "papers")
+BASE_DIR = "papers"
 
 SUBJECTS = {
     # GROUP I — LANGUAGES
